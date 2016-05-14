@@ -30,22 +30,28 @@ int main(int argc, char *argv[])
     sb.append("settings.conf");
     // check to see if we have a settings file where we started from
     // if not fall back to system hard coded path
-    QFileInfo file(sb.toLatin1());
+    QFileInfo file(sb);
     if (file.exists()) {
-        qDebug() << "[QML] using local settings file";
+        qDebug() << "[QML] using local settings file:" << file.filePath();
         settingsFile.setFile(file.filePath());
     } else {
-        qDebug() << "[QML] using system defined settings file";
+        qDebug() << "[QML] using system defined settings file:" << SYSTEM_SETTINGS_FILE;
         settingsFile.setFile(SYSTEM_SETTINGS_FILE);
     }
 
-    QSettings settings(settingsFile.filePath(),QSettings::NativeFormat);
+    #ifdef Q_OS_WIN
+        QSettings settings(settingsFile.filePath(),QSettings::IniFormat);
+    #else
+        QSettings settings(settingsFile.filePath(),QSettings::NativeFormat);
+    #endif
 
     settings.beginGroup(SYSTEM_SETTINGS_SECTION);
     int port = settings.value("port",4000).toInt();
     bool parseJSON = settings.value("parse_json", true).toBool();
 
     MainController controller(&view, port, parseJSON);
+
+    QString test = settings.value("main_view").toString();
 
     view.setSource(QUrl::fromLocalFile(settings.value("main_view").toString()));
     view.setResizeMode(QQuickView::SizeRootObjectToView);

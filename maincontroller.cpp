@@ -49,24 +49,27 @@ void MainController::onMessageAvailable(QByteArray ba)
     // Our protocol is obj.prop=value, so split message
     if (ba.contains("=") && ba.contains("."))
     {
-        QList<QByteArray> values = ba.split('=');
-        QList<QByteArray> items = values[0].split('.');
+        QByteArray value;
+        int pos = ba.indexOf("=");
+        value = ba.mid(pos + 1, ba.length());
+        QByteArray item = ba.mid(0, pos);
+        QList<QByteArray> items = item.split('.');
 
-        if (values.count() != 2 && items.count() != 2) {
-            qDebug() << "Message syntax error.";
+        if (value.length() == 0 || items.count() != 2) {
+            qDebug() << "[QML] Message syntax error.";
             return;
         }
         else
         {
-            qDebug() << "[sbRIO]: " << items[0] << "." << items[1] << ": " << values[1];
+            qDebug() << "[sbRIO]: " << items[0] << "." << items[1] << ": " << value;
             if (m_parseJSON)
-                setJsonProperty(items[0], items[1], values[1]);
+                setJsonProperty(items[0], items[1], value);
             else
-                setProperty(items[0], items[1], values[1]);
+                setProperty(items[0], items[1], value);
         }
     }
     else{
-        qDebug() << "Invalid Message.";
+        qDebug() << "[QML] Invalid Message.";
     }
 
 }
@@ -77,7 +80,7 @@ void MainController::onClientConnected()
     m_clients++;
     m_mutex.unlock();
     emit readyToSend();
-    qDebug() << "Clients connected: " << m_clients << endl;
+    qDebug() << "[QML] Clients connected: " << m_clients << endl;
 }
 
 void MainController::onClientDisconnected()
@@ -91,7 +94,7 @@ void MainController::onClientDisconnected()
         emit notReadyToSend();
     }
 
-    qDebug() << "Clients connected: " << m_clients << endl;
+    qDebug() << "[QML] Clients connected: " << m_clients << endl;
 }
 
 
@@ -99,7 +102,7 @@ void MainController::setJsonProperty(QString object, QString property, QString v
 {
     QQuickItem *obj =  m_view->rootObject()->findChild<QQuickItem*>(object);
     if (!obj) {
-        qDebug() << "Item [" << object << "] not found" << endl;
+        qDebug() << "[QML] Item [" << object << "] not found" << endl;
         return;
     }
 
@@ -109,26 +112,26 @@ void MainController::setJsonProperty(QString object, QString property, QString v
 
     if(!doc.isNull())
     {
-        if(doc.isObject())
+        if(doc.isObject() || doc.isArray())
         {
             jsonVariant = doc.toVariant();
         }
         else
         {
-            qDebug() << "Document is not an object" << endl;
+            qDebug() << "[QML] Document is not an object" << endl;
             return;
         }
     }
     else
     {
-        qDebug() << "Invalid JSON...\n" << value << endl;
+        qDebug() << "[QML] Invalid JSON:\n" << value << endl;
         return;
     }
 
     bool found = obj->setProperty(property.toLatin1(), jsonVariant);
 
     if (!found) {
-        qDebug() << "Property [" << property << "] invalid" << endl;
+        qDebug() << "[QML] Property [" << property << "] invalid" << endl;
     }
 }
 
@@ -137,13 +140,13 @@ void MainController::setProperty(QString object, QString property, QString value
 {
     QQuickItem *obj =  m_view->rootObject()->findChild<QQuickItem*>(object);
     if (!obj) {
-        qDebug() << "Item [" << object << "] not found" << endl;
+        qDebug() << "[QML] Item [" << object << "] not found" << endl;
         return;
     }
 
     bool found = obj->setProperty(property.toLatin1(), value);
 
     if (!found) {
-        qDebug() << "Property [" << property << "] invalid" << endl;
+        qDebug() << "[QML] Property [" << property << "] invalid" << endl;
     }
 }

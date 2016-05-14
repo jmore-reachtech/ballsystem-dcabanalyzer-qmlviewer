@@ -50,11 +50,12 @@ void StringServer::onClientReadyRead()
 
     for(int i = 0; i < count; i++) {
         while (m_clients[i]->bytesAvailable() && m_clients[i]->canReadLine()) {
-            //qDebug() << "Data available from client" << endl;
             QByteArray ba = m_clients[i]->readLine();
+            //qDebug() << "Data available from client:" << ba << endl;
             emit MessageAvailable(ba);
         }
     }
+
 }
 
 void StringServer::onClientDisconnected()
