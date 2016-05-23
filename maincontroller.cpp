@@ -10,10 +10,12 @@
 MainController::MainController(MainView *view, int port, bool parseJSON, QObject *parent) : QObject(parent)
   , m_view(view)
   , m_stringServer(new StringServer(this, port))
+  , m_screen(new Screen(view, 0, 7, 7, this))
 {
     m_clients = 0;
     m_parseJSON = parseJSON;
     m_view->rootContext()->setContextProperty("controller",this);
+    m_view->rootContext()->setContextProperty("screen", m_screen);
 
     connect(m_stringServer, SIGNAL(MessageAvailable(QByteArray))
             , this, SLOT(onMessageAvailable(QByteArray)));

@@ -3,7 +3,7 @@ TEMPLATE = app
 QT += qml quick network
 CONFIG += c++11
 
-VERSION = 1.0.1
+VERSION = 1.0.2
 TARGET = qml-viewer
 
 # add #define for the version
@@ -12,7 +12,8 @@ DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 SOURCES += main.cpp \
     maincontroller.cpp \
     mainview.cpp \
-    stringserver.cpp
+    stringserver.cpp \
+    screen.cpp
 
 RESOURCES +=
 
@@ -26,7 +27,8 @@ HEADERS += \
     maincontroller.h \
     mainview.h \
     stringserver.h \
-    systemdefs.h
+    systemdefs.h \
+    screen.h
 
 macx:QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.11
 

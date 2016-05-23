@@ -5,6 +5,7 @@
 #include <QMutex>
 #include "mainview.h"
 #include "stringserver.h"
+#include "screen.h"
 
 class MainController : public QObject
 {
@@ -32,6 +33,7 @@ private slots:
 private:
     MainView *m_view;
     StringServer *m_stringServer;
+    Screen *m_screen;
     qint32 m_clients;
     QMutex m_mutex;
     bool m_parseJSON;
