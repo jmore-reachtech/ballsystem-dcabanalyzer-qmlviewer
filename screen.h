@@ -28,7 +28,7 @@ public slots:
      void setOriginalBrightness();
      bool isDim();
      bool isScreenSaverEnabled();
-
+     void setBrightness(int val);
 
 private slots:
     void onScreenSaverTimerTimeout();
@@ -43,7 +43,7 @@ private:
     bool m_screenSaverEnabled;
 
     bool eventFilter(QObject *obj, QEvent *event);
-    void setBrightness(int val);
+
 };
 
 #endif // SCREEN_H
